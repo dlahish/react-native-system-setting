@@ -65,17 +65,25 @@ public class SystemSetting extends ReactContextBaseJavaModule implements Activit
     }
 
     private void registerVolumeReceiver() {
-        if (!volumeBR.isRegistered()) {
-            IntentFilter filter = new IntentFilter("android.media.VOLUME_CHANGED_ACTION");
-            mContext.registerReceiver(volumeBR, filter);
-            volumeBR.setRegistered(true);
+        try {
+            if (!volumeBR.isRegistered()) {
+                IntentFilter filter = new IntentFilter("android.media.VOLUME_CHANGED_ACTION");
+                mContext.registerReceiver(volumeBR, filter);
+                volumeBR.setRegistered(true);
+            }       
+        } catch (Exception e) {
+            Log.e(TAG, "err", e);
         }
     }
 
     private void unregisterVolumeReceiver() {
-        if (volumeBR.isRegistered()) {
-            mContext.unregisterReceiver(volumeBR);
-            volumeBR.setRegistered(false);
+        try {
+            if (volumeBR.isRegistered()) {
+                mContext.unregisterReceiver(volumeBR);
+                volumeBR.setRegistered(false);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "err", e);
         }
     }
 
@@ -303,6 +311,7 @@ public class SystemSetting extends ReactContextBaseJavaModule implements Activit
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                         && !notificationManager.isNotificationPolicyAccessGranted()) {
                     Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     mContext.startActivity(intent);
                 }
             }
